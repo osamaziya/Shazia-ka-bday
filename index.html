@@ -12,33 +12,20 @@ body{
   margin:0;
   padding:20px;
   text-align:center;
-
   background:
-    linear-gradient(
-      rgba(0,0,0,0.4),
-      rgba(0,0,0,0.4)
-    ),
-    url("IMG-20251112-WA0463.jpg");
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-@keyframes bgMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+    linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+    url("bg.jpg");
+  background-size:cover;
+  background-position:center;
 }
 
 .box{
-  background: rgba(255,255,255,0.9);
-  backdrop-filter: blur(6px);
+  background:rgba(255,255,255,0.92);
   padding:20px;
   border-radius:18px;
   max-width:420px;
   margin:auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
 }
 
 button{
@@ -56,11 +43,12 @@ button:hover{background:#ff1a66}
 
 .dance{
   font-size:45px;
+  display:inline-block;
   animation:dance 1s infinite alternate;
 }
 @keyframes dance{
-  from{transform:translateX(-10px)}
-  to{transform:translateX(10px)}
+  from{transform:translateX(-10px) rotate(-10deg)}
+  to{transform:translateX(10px) rotate(10deg)}
 }
 
 .confetti{
@@ -73,10 +61,51 @@ button:hover{background:#ff1a66}
   to{transform:translateY(110vh) rotate(360deg)}
 }
 
-#tenBtn{
-  transition:transform 0.4s;
-}
+#tenBtn{transition:transform .3s}
 </style>
+
+<!-- 🔥 FIREBASE CDN (<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDG5bOma_BCXl0VBPRR4Ol6pLzNRNuoITk",
+    authDomain: "birthday-f60c6.firebaseapp.com",
+    databaseURL: "https://birthday-f60c6-default-rtdb.firebaseio.com",
+    projectId: "birthday-f60c6",
+    storageBucket: "birthday-f60c6.firebasestorage.app",
+    messagingSenderId: "150134216721",
+    appId: "1:150134216721:web:6a6ce787e134f85a81b9b0",
+    measurementId: "G-72MYB19Q14"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+/* 🔴 PASTE_FIREBASE_CONFIG_HERE */
+var firebaseConfig = {
+  apiKey: "PASTE",
+  authDomain: "PASTE",
+  databaseURL: "PASTE",
+  projectId: "PASTE",
+  storageBucket: "PASTE",
+  messagingSenderId: "PASTE",
+  appId: "PASTE"
+};
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
+/* 🔴 END FIREBASE CONFIG */
+</script>
 </head>
 
 <body onload="loadQuestion()">
@@ -85,14 +114,23 @@ button:hover{background:#ff1a66}
 <script>
 let step=0, mood="", cakeClicks=0, scale=1;
 
+/* 🔥 SAVE RESPONSE FUNCTION */
+function saveResponse(question, answer){
+  database.ref("responses").push({
+    question: question,
+    answer: answer,
+    time: new Date().toLocaleString()
+  });
+}
+
 function loadQuestion(){
 const q=document.getElementById("quiz");
 
 if(step===0){
 q.innerHTML=`
 <h2>Before we start… rate your gussa 😤</h2>
-<button onclick="next()">0% 😇</button>
-<button onclick="next()">100% 😤</button>`;
+<button onclick="saveResponse('Q1 Gussa','0%'); next()">0% 😇</button>
+<button onclick="saveResponse('Q1 Gussa','100%'); next()">100% 😤</button>`;
 }
 
 else if(step===1){
@@ -104,14 +142,14 @@ q.innerHTML=`
 else if(step===2){
 q.innerHTML=`
 <h2>Aaj tumhara mood? 😌</h2>
-<button onclick="answerMood('drama')">Drama mode 😈</button>
-<button onclick="answerMood('innocent')">Innocent but dangerous 😇</button>
-<button onclick="answerMood('birthday')">Birthday hai 🎂</button>`;
+<button onclick="saveResponse('Q2 Mood','Drama'); answerMood('drama')">Drama mode 😈</button>
+<button onclick="saveResponse('Q2 Mood','Innocent'); answerMood('innocent')">Innocent but dangerous 😇</button>
+<button onclick="saveResponse('Q2 Mood','Birthday'); answerMood('birthday')">Birthday hai 🎂</button>`;
 }
 
 else if(step===3){
 let t=mood==="drama"?"Drama toh permanent hai 😂":
-mood==="innocent"?"Ye toh tumhara default mode hai 😏":
+mood==="innocent"?"Ye toh tumhara default hai 😏":
 "Aaj ke liye sab maaf 🫂";
 q.innerHTML=`<h2>${t}</h2><button onclick="next()">Next</button>`;
 }
@@ -119,9 +157,9 @@ q.innerHTML=`<h2>${t}</h2><button onclick="next()">Next</button>`;
 else if(step===4){
 q.innerHTML=`
 <h2>364 din mujhse gussa kyu? 😒</h2>
-<button onclick="next()">Aadat 😌</button>
-<button onclick="next()">Tum hi tang 🙄</button>
-<button onclick="next()">Birthday hai 🎂</button>`;
+<button onclick="saveResponse('Q3 Gussa Reason','Aadat'); next()">Aadat 😌</button>
+<button onclick="saveResponse('Q3 Gussa Reason','Tum hi tang'); next()">Tum hi tang 🙄</button>
+<button onclick="saveResponse('Q3 Gussa Reason','Birthday'); next()">Birthday hai 🎂</button>`;
 }
 
 else if(step===5){
@@ -129,11 +167,11 @@ cakeClicks=0;
 q.innerHTML=`
 <h2>Catch the cake 🎂</h2>
 <div style="height:200px;position:relative">
-<button id="cakeBtn" onclick="moveCake()" style="position:absolute">Cake mode 🎂</button>
+<button id="cakeBtn" onclick="moveCake()" style="position:absolute">Cake 🎂</button>
 </div>`;
 }
 
-else if(step===6){
+else{
 q.innerHTML=`
 <h1>🎉 Happy Birthday SHAZIA 🎂</h1>
 <p>Stay happy always 💖</p>
@@ -144,28 +182,18 @@ q.innerHTML=`
 <hr>
 
 <h2>Rate my efforts & website development 😌</h2>
-<button onclick="rate()">1 ⭐</button>
-<button onclick="rate()">3 ⭐</button>
-<button onclick="rate()">5 ⭐</button>
-<button onclick="rate()">8 ⭐</button>
-<button id="tenBtn" onclick="finalTen()">10 ⭐</button>`;
+<button onclick="growTen()">1 ⭐</button>
+<button onclick="growTen()">3 ⭐</button>
+<button onclick="growTen()">5 ⭐</button>
+<button onclick="growTen()">8 ⭐</button>
+<button id="tenBtn" onclick="saveResponse('Rating','10/10'); finalTen()">10 ⭐</button>
+`;
 startConfetti();
 }
 }
 
-function rate(){
-scale+=0.3;
-document.getElementById("tenBtn").style.transform=`scale(${scale})`;
-}
-
-function finalTen(){
-  document.getElementById("quiz").innerHTML=`
-    <h2>😏 Finally!</h2>
-    <p>Samajh aa gaya na kaunsa option sahi hai 💯</p>
-    <h2><b>🎉 Happy Birthday SHAZIA 🎂</b></h2>
-  `;
-}
-
+function next(){step++;loadQuestion()}
+function answerMood(v){mood=v;step++;loadQuestion()}
 
 function moveCake(){
 cakeClicks++;
@@ -173,11 +201,22 @@ const b=document.getElementById("cakeBtn");
 if(cakeClicks<3){
 b.style.left=Math.random()*220+"px";
 b.style.top=Math.random()*120+"px";
-}else{step++;loadQuestion();}
+}else{
+saveResponse('Q4 Cake','Cake pakad li 🎂');
+step++;loadQuestion();
+}
 }
 
-function next(){step++;loadQuestion()}
-function answerMood(v){mood=v;step++;loadQuestion()}
+function growTen(){
+scale+=0.25;
+document.getElementById("tenBtn").style.transform=`scale(${scale})`;
+}
+
+function finalTen(){
+document.getElementById("quiz").innerHTML=`
+<h2>😏 Samajh aa gaya na kaunsa option sahi hai 💯</h2>
+<h2><b>🎉 Happy Birthday SHAZIA 🎂</b></h2>`;
+}
 
 function startConfetti(){
 for(let i=0;i<40;i++){
