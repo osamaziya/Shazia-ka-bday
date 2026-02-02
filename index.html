@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday Special 🎂</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  min-height:100vh;
+  margin:0;
+  padding:20px;
+  text-align:center;
+
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.4),
+      rgba(0,0,0,0.4)
+    ),
+    url("bg.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.box{
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  padding:20px;
+  border-radius:18px;
+  max-width:420px;
+  margin:auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border:none;
+  border-radius:10px;
+  background:#ff4d88;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
+button:hover{background:#ff1a66}
+
+.dance{
+  font-size:45px;
+  animation:dance 1s infinite alternate;
+}
+@keyframes dance{
+  from{transform:translateX(-10px)}
+  to{transform:translateX(10px)}
+}
+
+.confetti{
+  position:fixed;
+  width:8px;height:8px;
+  top:-10px;
+  animation:fall 3s linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg)}
+}
+
+#tenBtn{
+  transition:transform 0.4s;
+}
+</style>
+</head>
+
+<body onload="loadQuestion()">
+<div class="box" id="quiz"></div>
+
+<script>
+let step=0, mood="", cakeClicks=0, scale=1;
+
+function loadQuestion(){
+const q=document.getElementById("quiz");
+
+if(step===0){
+q.innerHTML=`
+<h2>Before we start… rate your gussa 😤</h2>
+<button onclick="next()">0% 😇</button>
+<button onclick="next()">100% 😤</button>`;
+}
+
+else if(step===1){
+q.innerHTML=`
+<h2>Tum toh hamesha gussa hi rehti ho 😒</h2>
+<button onclick="next()">Aage chalo 😌</button>`;
+}
+
+else if(step===2){
+q.innerHTML=`
+<h2>Aaj tumhara mood? 😌</h2>
+<button onclick="answerMood('drama')">Drama mode 😈</button>
+<button onclick="answerMood('innocent')">Innocent but dangerous 😇</button>
+<button onclick="answerMood('birthday')">Birthday hai 🎂</button>`;
+}
+
+else if(step===3){
+let t=mood==="drama"?"Drama toh permanent hai 😂":
+mood==="innocent"?"Ye toh tumhara default mode hai 😏":
+"Aaj ke liye sab maaf 🫂";
+q.innerHTML=`<h2>${t}</h2><button onclick="next()">Next</button>`;
+}
+
+else if(step===4){
+q.innerHTML=`
+<h2>364 din mujhse gussa kyu? 😒</h2>
+<button onclick="next()">Aadat 😌</button>
+<button onclick="next()">Tum hi tang 🙄</button>
+<button onclick="next()">Birthday hai 🎂</button>`;
+}
+
+else if(step===5){
+cakeClicks=0;
+q.innerHTML=`
+<h2>Catch the cake 🎂</h2>
+<div style="height:200px;position:relative">
+<button id="cakeBtn" onclick="moveCake()" style="position:absolute">Cake mode 🎂</button>
+</div>`;
+}
+
+else if(step===6){
+q.innerHTML=`
+<h1>🎉 Happy Birthday SHAZIA 🎂</h1>
+<p>Stay happy always 💖</p>
+<div>
+<span class="dance">💃</span>
+<span class="dance">🕺</span>
+</div>
+<hr>
+
+<h2>Rate my efforts & website development 😌</h2>
+<button onclick="rate()">1 ⭐</button>
+<button onclick="rate()">3 ⭐</button>
+<button onclick="rate()">5 ⭐</button>
+<button onclick="rate()">8 ⭐</button>
+<button id="tenBtn" onclick="finalTen()">10 ⭐</button>`;
+startConfetti();
+}
+}
+
+function rate(){
+scale+=0.3;
+document.getElementById("tenBtn").style.transform=`scale(${scale})`;
+}
+
+function finalTen(){
+  document.getElementById("quiz").innerHTML=`
+    <h2>😏 Finally!</h2>
+    <p>Samajh aa gaya na kaunsa option sahi hai 💯</p>
+    <h2><b>🎉 Happy Birthday SHAZIA 🎂</b></h2>
+  `;
+}
+
+
+function moveCake(){
+cakeClicks++;
+const b=document.getElementById("cakeBtn");
+if(cakeClicks<3){
+b.style.left=Math.random()*220+"px";
+b.style.top=Math.random()*120+"px";
+}else{step++;loadQuestion();}
+}
+
+function next(){step++;loadQuestion()}
+function answerMood(v){mood=v;step++;loadQuestion()}
+
+function startConfetti(){
+for(let i=0;i<40;i++){
+let c=document.createElement("div");
+c.className="confetti";
+c.style.left=Math.random()*100+"vw";
+c.style.background=`hsl(${Math.random()*360},100%,50%)`;
+c.style.animationDuration=(2+Math.random()*3)+"s";
+document.body.appendChild(c);
+}}
+</script>
+</body>
+</html>
